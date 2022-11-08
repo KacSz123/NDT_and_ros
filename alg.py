@@ -42,10 +42,10 @@ def GetMuSigmaFromAngle(x):
     sigma_x=suma/len(x)
     return mu_x, sigma_x
 def ComputeAngle(xsigma,ysigma):
-    return math.degrees(math.asin(xsigma/math.sqrt(xsigma*xsigma+ysigma*ysigma)))
+    return -math.degrees(math.asin(xsigma/math.sqrt(xsigma*xsigma+ysigma*ysigma)))
     
 def main():
-    cell_size = 20
+    cell_size = 25
     img_name = 'img/bigmap.bmp'
 
     im = Image.open(img_name, 'r')
@@ -82,8 +82,8 @@ def main():
             if(counter>5):
                 ymi,ysigma = GetMuSigmaFromEq(current_y)
                 xmi,xsigma = GetMuSigmaFromEq(current_x)
-                #ang=ComputeAngle(xsigma,ysigma)
-                ang=0
+                ang=ComputeAngle(xsigma,ysigma)
+                #ang=0
                 ells.append( Ellipse(xy=(xmi, ymi), width=xsigma, height=ysigma,angle=ang,
                                      edgecolor='r', fc='None', lw=0.5))       
                     
