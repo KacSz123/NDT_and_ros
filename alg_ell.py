@@ -44,14 +44,35 @@ def GetMuSigmaFromAngle(x):
         suma = suma + (i-mu_x)*(i-mu_x)
     sigma_x=suma/len(x)
     return mu_x, sigma_x
+
 def ComputeAngle(xsigma,ysigma):
-    return -math.degrees(math.asin(xsigma/math.sqrt(xsigma*xsigma+ysigma*ysigma)))
+    return math.degrees(math.atan(xsigma/ysigma))
     
     
-                            #################- MAIN -#####################    
+def RegLinp(x,y,xmi,ymi):
+    sumU=0
+    sumD=0
+    for i in range(len(x)):
+        sumU+=(x[i]-xmi)*(y[i]-ymi)
+        sumD+=(x[i]-xmi)**2
+        if sumD==0:
+            sumD=0.1
+        m=sumU/sumD
+    return m, (len(y)*ymi-m*xmi)   
+def takeSecond(elem):
+    return elem[1]
+def GetBeginEnd(x,y):
+    ll=[]
+    for i in range(len(x)):
+        ll.append((x[i],y[i]))
+    ll.sort(key=takeSecond)
+    beg=ll[0]
+    endd=ll.pop()
+    coll=np.polyfit(beg,endd,1)
+    return math.atan2(coll[0],coll[1])
 def main():
-    cell_size = 20
-    img_name = 'img/sth.png'
+    cell_size = 50
+    img_name = 'img/123.bmp'
 
     im = Image.open(img_name, 'r')
     width, height = im.size
@@ -85,6 +106,7 @@ def main():
                         current_x.append((j*cell_size)+l)
                         current_y.append((height-(i*cell_size+k)))
             if(counter>5):
+                
                 ymi,ysigma = GetMuSigmaFromEqSqrt(current_y)
                 if(ysigma<0.0001):
                      ysigma = 0.1
@@ -92,35 +114,38 @@ def main():
                 if(xsigma<0.0001):
                      xsigma = 0.1
                 
-                # print("sigmax= %f sigmay= %f" %(xsigma,ysigma))
-                # ang=ComputeAngle(xsigma,ysigma)
-                # #ang=0
-                # ells.append( Ellipse(xy=(xmi, ymi), width=2*xsigma, height=2*ysigma,angle=ang,
-                #                      edgecolor='b', fc='None', lw=1))
-                xz,yz = np.meshgrid(current_x,current_y)
-                z=gaus2d(xz,yz,xmi,ymi,xsigma,ysigma)
-                cs = plt.contourf(xz,yz,z, cmap='Blues')
+                a,b=RegLinp(current_x,current_y,xmi,ymi)
+                #ang=-math.degrees(GetBeginEnd(current_x,current_y))
+                
+                #print("sigmax= %f sigmay= %f" %(xsigma,ysigma))
+                ang = -math.degrees(math.atan(a/b))
+                #ang = ComputeAngle(xsigma,ysigma)
+                # ang=0
+                print(ang)
+                ells.append( Ellipse(xy=(xmi, ymi), width=2*xsigma, height=2*ysigma,angle=ang,
+                                     edgecolor='b', fc='None', lw=1))
+                
             current_x.clear()
             current_y.clear()
 
-    #fig, ax = plt.subplots(subplot_kw={'aspect': 'equal'})
-    #for e in ells:
-        #ax.add_artist(e)
-        #e.set_facecolor('grey')     
-    #del ells
+    fig, ax = plt.subplots(subplot_kw={'aspect': 'equal'})
+    for e in ells:
+        ax.add_artist(e)
+        e.set_facecolor('grey')     
+    del ells
         
     cmd = 'display ' + img_name + '&'
     os.system(cmd)  
     plt.xlim([0,width])
     plt.ylim([0,height])           
-    plt.show() 
+
     # plt.figure(2)
 
     # plt.xlim([0,width])
     # plt.ylim([0,height])
 
     # plt.plot(x,y,'b.', linewidth=1)
-    
+    plt.show() 
     #plt.show()
     # #print(list2d)
     
