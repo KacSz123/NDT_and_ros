@@ -34,18 +34,18 @@ class matplotlibSwitchGraphs:
         self.ells2P = el2p
         self.config_window()
         self.draw_graph_one()
-        self.frame.pack(expand=YES, fill=BOTH)
+        self.frame.pack(expand=NO, fill=BOTH)
 
 
     def config_window(self):
         self.canvas.mpl_connect("key_press_event", self.on_key_press)
         toolbar = NavigationToolbar2Tk(self.canvas, self.master)
         toolbar.update()
-        self.canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
+        self.canvas.get_tk_widget().pack(side=TOP, fill=Y, expand=1)
         self.button = Button(self.master, text="Quit", command=self._quit)
-        self.button.pack(side=BOTTOM)
+        self.button.pack(side=BOTTOM,expand=0, fill=X)
         self.button_switch = Button(self.master, text="Switch Graphs", command=self.switch_graphs)
-        self.button_switch.pack(side=BOTTOM)
+        self.button_switch.pack(side=BOTTOM,expand=0, fill=X)
 
 
     def draw_graph_one(self):     
@@ -111,7 +111,8 @@ def main():
     counter = 0     
     j=0
     ellsRL=[]  
-    ells2P=[]    
+    ells2P=[]
+    ellsOrin=[]    
     for i in range(cells_vertical):
         for j in range(cells_horizontal):
             counter = 0  
@@ -135,7 +136,7 @@ def main():
                                      edgecolor='b', fc='None', lw=1))
                 ells2P.append( Ellipse(xy=(xmi, ymi), width=2*xsigma, height=2*ysigma,angle=ang2P,
                                      edgecolor='b', fc='None', lw=1))
-                
+                ellsOrin
             current_x.clear()
             current_y.clear()
 
