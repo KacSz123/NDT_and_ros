@@ -64,12 +64,14 @@ def RegLinp(x,y,xmi,ymi):
         ang=math.degrees(math.atan2(xr,yr))              
     return ang
 
-
+def SortBy2(el):
+    return el[1]
 
 def GetBeginEnd(x,y):
     ll=[]
     for i in range(len(x)):
         ll.append((x[i],y[i]))
+    ll.sort(key=SortBy2)
     xr=x[0]-x[len(x)-1]
     yr=y[0]-y[len(y)-1]
     if xr==0:

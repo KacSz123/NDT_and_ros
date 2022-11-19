@@ -59,4 +59,4 @@ def GetListsOfEllipses(cell_s, img_name):
                 
             current_x.clear()
             current_y.clear()
-    return ells2P, ellsRL
+    return ells2P, ellsRL,width,height

@@ -5,20 +5,26 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
 import numpy as np
 from tkinter import *
+import sys
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
 # Implement the default Matplotlib key bindings.
 from matplotlib.backend_bases import key_press_handler
 
+
+def ShowOriginal(img_name):
+    cmd = 'display ' + img_name + '&'
+    os.system(cmd) 
+
 # Seperated out config of plot to just do it once
 def config_plot():
     fig, ax = plt.subplots()
-    ax.set(xlabel='time (s)', ylabel='voltage (mV)',
+    ax.set(xlabel='x', ylabel='y',
            title='Graph One')
     return (fig, ax)
 
 class matplotlibSwitchGraphs:
-    def __init__(self, master, elrl, el2p):
+    def __init__(self, master, elrl, el2p,w,h):
         self.master = master
         self.frame = Frame(self.master)
         self.fig, self.ax = plt.subplots(subplot_kw={'aspect': 'equal'})
@@ -26,6 +32,8 @@ class matplotlibSwitchGraphs:
         self.canvas = FigureCanvasTkAgg(self.fig, self.master)  
         self.ellsRL = elrl  
         self.ells2P = el2p
+        self.we = w
+        self.he = h
         self.config_window()
         self.draw_graph_one()
         self.frame.pack(expand=NO, fill=BOTH)
@@ -35,7 +43,7 @@ class matplotlibSwitchGraphs:
         self.canvas.mpl_connect("key_press_event", self.on_key_press)
         toolbar = NavigationToolbar2Tk(self.canvas, self.master)
         toolbar.update()
-        self.canvas.get_tk_widget().pack(side=TOP, fill=Y, expand=1)
+        self.canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
         self.button = Button(self.master, text="Quit", command=self._quit)
         self.button.pack(side=BOTTOM,expand=0, fill=X)
         self.button_switch = Button(self.master, text="Switch Graphs", command=self.switch_graphs)
@@ -48,19 +56,19 @@ class matplotlibSwitchGraphs:
         for e in self.ellsRL:
                 self.ax.add_artist(e)
                 e.set_facecolor('gray')  
-        self.ax.set(title='Ellipse with reglinp (LSE)')
-        plt.xlim([0,1000])
-        plt.ylim([0,1000])  
+        self.ax.set(title='Ellipse with line regression (LSE)')
+        plt.xlim([0,self.we])
+        plt.ylim([0,self.he])  
         self.canvas.draw()
 
     def draw_graph_two(self):    
         self.ax.clear() 
         for e in self.ells2P:
                 self.ax.add_artist(e)
-                e.set_facecolor('blue')    
+                e.set_facecolor('gray')    
         self.ax.set(title='Ellipse based on 2 points')
-        plt.xlim([0,1000])
-        plt.ylim([0,1000])  
+        plt.xlim([0,self.we])
+        plt.ylim([0,self.he]) 
         self.canvas.draw()
 
     def on_key_press(event):
@@ -84,12 +92,19 @@ def main():
 
     ells2P=[]
     ellsRL=[]
-    ells2P,ellsRL=GetListsOfEllipses(50, 'img/123.bmp')
+    print(sys.argv)
+    if len(sys.argv)==3:
+        ells2P,ellsRL,w,h=GetListsOfEllipses((int(sys.argv[1])), 'img/'+sys.argv[2])
+        ShowOriginal('img/'+sys.argv[2])
+    else:
+        ells2P,ellsRL,w,h=GetListsOfEllipses(25, 'img/img3.bmp')
+        ShowOriginal('img/img3.bmp')
     root = Tk()
-    matplotlibSwitchGraphs(root,ellsRL,ells2P)
+    matplotlibSwitchGraphs(root,ellsRL,ells2P,w,h)
     root.mainloop()
     ells2P.clear()
     ellsRL.clear()
-    #pixel_values.clear()
+    #pixel_values.clear() 
+    #pixel_values.clear() 
 if __name__ == '__main__':
     main()
